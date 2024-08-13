@@ -83,11 +83,14 @@ jobs:
       with:
         name: python-package-distributions
         path: libraries/dagster-delta/dist/
+    - name: list files
+      run: ls libraries/dagster-delta/dist/
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         packages-dir: libraries/dagster-delta/dist/
         password: ${{ secrets.PYPI_API_TOKEN }}
+        verbose: true
 
 
   publish-dagster-delta-polars:
@@ -107,9 +110,12 @@ jobs:
       with:
         name: python-package-distributions
         path: libraries/dagster-delta-polars/dist/
+    - name: list files
+      run: ls libraries/dagster-delta-polars/dist/
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         packages-dir: libraries/dagster-delta-polars/dist/
         password: ${{ secrets.PYPI_API_TOKEN }}
+        verbose: true
 
