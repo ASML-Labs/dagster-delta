@@ -24,7 +24,13 @@ from deltalake import DeltaTable, WriterProperties, write_deltalake
 from deltalake.exceptions import TableNotFoundError
 from deltalake.schema import Field as DeltaField
 from deltalake.schema import PrimitiveType, Schema, _convert_pa_schema_to_delta
-from deltalake.table import FilterLiteralType, filters_to_expression  # type: ignore
+from deltalake.table import FilterLiteralType
+
+try:
+    from pyarrow.parquet import filters_to_expression  # pyarrow >= 10.0.0
+except ImportError:
+    from pyarrow.parquet import _filters_to_expression as filters_to_expression
+
 
 from .config import MergeType
 from .io_manager import (

@@ -19,8 +19,7 @@ else
 endif
 
 .venv:  ## Set up virtual environment and install requirements
-	pip install --upgrade pip
-	pip install uv==0.2.35
+	pip3 install uv==0.2.35
 	uv venv
 	$(MAKE) requirements
 
