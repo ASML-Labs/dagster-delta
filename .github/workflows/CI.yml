@@ -89,7 +89,7 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         packages-dir: my_dists/dagster-delta/dist/
-        password: ${{ secrets.PYPI_API_TOKEN }}
+        password: ${{ secrets.PYPI_API_TOKEN_DD }}
         verbose: true
 
 
@@ -116,6 +116,6 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         packages-dir: my_dists/dagster-delta-polars/dist/
-        password: ${{ secrets.PYPI_API_TOKEN }}
+        password: ${{ secrets.PYPI_API_TOKEN_DDP }}
         verbose: true
 
