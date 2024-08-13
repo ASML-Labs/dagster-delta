@@ -1,0 +1,155 @@
+[project]
+name = "dagster-delta"
+version = "0.1.0"
+description = "base deltalake IO Managers for Dagster"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "dagster",
+    "deltalake",
+]
+authors = [{name = "Ion Koutsouris"}]
+license = { file = "licenses/LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
+keywords = ["dagster", "deltalake", "delta","datalake", "io manager"]
+
+
+
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[tool.setuptools]
+packages = ["dagster_delta"]
+
+[tool.pyright]
+
+typeCheckingMode = 'basic'
+reportUnknownMemberType   = false
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+reportMissingImports = false
+pythonVersion =  "3.10"
+
+[tool.ruff]
+
+force-exclude = true
+lint.select = [
+    "E",
+    "F",
+    "W",
+    "N",
+    "D",
+    "UP",
+    "ANN",
+    "A",
+    "COM",
+    "C4",
+    "ICN",
+    "PT",
+    "SIM",
+    "ARG",
+    "TD",
+    "ERA",
+    "NPY",
+    "I",
+]
+
+lint.ignore = [
+    "D100",
+    "D104",
+    "D107",
+    "D203",
+    "D205",
+    "D206",
+    "D213",
+    "D400",
+    "D401",
+    "D413",
+    "D415",
+    "E501",
+    "E712",
+    "PT011",
+    "ANN002",
+    "ANN003",
+    "ANN101",
+    "ANN102",
+    "ANN204",
+    "C416",
+    "TD003",
+]
+
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+lint.fixable = ["ALL"]
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    ".ipynb",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+# Same as Black.
+line-length = 100
+
+# Allow unused variables when underscore-prefixed.
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.9
+target-version = "py39"
+
+[tool.ruff.lint.flake8-annotations]
+suppress-none-returning = true
+
+[tool.ruff.lint.per-file-ignores]
+"dagster_delta_tests/*.py" = ["D100", "D103", "B018", "ANN001"]
+
+
+[tool.ruff.lint.pydocstyle]
+# Use Google-style docstrings.
+convention = "google"
