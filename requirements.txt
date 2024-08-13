@@ -1,0 +1,14 @@
+## build pckgs
+dagster
+polars
+lakefs
+deltalake
+
+## dev pckgs
+ruff==0.5.7
+pyright==1.1.375
+pytest==8.3.2
+
+## misc
+pip
+build
