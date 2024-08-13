@@ -76,8 +76,6 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/p/dagster-delta
-    permissions:
-      id-token: write
 
     steps:
     - name: Download all the dists
@@ -87,6 +85,9 @@ jobs:
         path: libraries/dagster-delta/dist/
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.PYPI_API_TOKEN }}
+
 
   publish-dagster-delta-polars:
     name: >-
@@ -98,8 +99,6 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/p/dagster-delta-polars
-    permissions:
-      id-token: write
 
     steps:
     - name: Download all the dists
@@ -109,4 +108,6 @@ jobs:
         path: libraries/dagster-delta-polars/dist/
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.PYPI_API_TOKEN }}
 
