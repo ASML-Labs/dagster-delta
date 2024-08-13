@@ -59,7 +59,7 @@ jobs:
     - name: Install pypa/build
       run: make .venv && VIRTUAL_ENV=./.venv 
     - name: Build a binary wheel
-      run: source .venv/bin/activate && python3 -m build -w "libraries/dagster-delta" && python3 -m build -w "libraries/dagster-delta"
+      run: source .venv/bin/activate && python3 -m build -w "libraries/dagster-delta" && python3 -m build -w "libraries/dagster-delta-polars"
     - name: Store the distribution packages
       uses: actions/upload-artifact@v3
       with:
@@ -82,13 +82,13 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: python-package-distributions
-        path: libraries/dagster-delta/dist/
+        path: my_dists/
     - name: list files
-      run: ls libraries/dagster-delta/dist/
+      run: ls my_dists/dagster-delta/dist/
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        packages-dir: libraries/dagster-delta/dist/
+        packages-dir: my_dists/dagster-delta/dist/
         password: ${{ secrets.PYPI_API_TOKEN }}
         verbose: true
 
@@ -109,13 +109,13 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: python-package-distributions
-        path: libraries/dagster-delta-polars/dist/
+        path: my_dists/
     - name: list files
-      run: ls libraries/dagster-delta-polars/dist/
+      run: ls my_dists/dagster-delta-polars/dist/
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        packages-dir: libraries/dagster-delta-polars/dist/
+        packages-dir: my_dists/dagster-delta-polars/dist/
         password: ${{ secrets.PYPI_API_TOKEN }}
         verbose: true
 
