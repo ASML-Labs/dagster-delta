@@ -1,6 +1,6 @@
 [project]
 name = "dagster-delta"
-version = "0.1.0"
+version = "0.1.1"
 description = "base deltalake IO Managers for Dagster"
 readme = "README.md"
 requires-python = ">=3.9"
