@@ -86,6 +86,7 @@ jobs:
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
+        packages-dir: libraries/dagster-delta/dist/
         password: ${{ secrets.PYPI_API_TOKEN }}
 
 
@@ -109,5 +110,6 @@ jobs:
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
+        packages-dir: libraries/dagster-delta-polars/dist/
         password: ${{ secrets.PYPI_API_TOKEN }}
 
