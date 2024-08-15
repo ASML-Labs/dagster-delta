@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  
+  lakefs:
+    image: treeverse/lakefs:latest
+    container_name: lakefs
+    ports:
+      - "8000:8000"
+    environment:
+      - LAKEFS_DATABASE_TYPE=local
+      - LAKEFS_BLOCKSTORE_TYPE=local
+      - LAKEFS_INSTALLATION_USER_NAME=local-user
+      - LAKEFS_INSTALLATION_ACCESS_KEY_ID=CICDUSER
+      - LAKEFS_INSTALLATION_SECRET_ACCESS_KEY=CICDPASSWORD
+      - LAKECTL_SERVER_ENDPOINT_URL=http://localhost:8000
+    user: root
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+        - |
+          apk update; apk add curl
+          lakefs run --local-settings &
+          echo "---- Creating repository ----"
+          wait-for -t 60 lakefs:8000 -- curl -u "$$LAKEFS_INSTALLATION_ACCESS_KEY_ID":"$$LAKEFS_INSTALLATION_SECRET_ACCESS_KEY" -X POST -H "Content-Type: application/json" -d '{ "name": "bronze", "storage_namespace": "local://bronze", "default_branch": "main", "sample_data": false }' http://localhost:8000/api/v1/repositories || true
+          wait-for -t 60 lakefs:8000 -- curl -u "$$LAKEFS_INSTALLATION_ACCESS_KEY_ID":"$$LAKEFS_INSTALLATION_SECRET_ACCESS_KEY" -X POST -H "Content-Type: application/json" -d '{ "name": "silver", "storage_namespace": "local://silver", "default_branch": "main", "sample_data": false }' http://localhost:8000/api/v1/repositories || true
+          wait-for -t 60 lakefs:8000 -- curl -u "$$LAKEFS_INSTALLATION_ACCESS_KEY_ID":"$$LAKEFS_INSTALLATION_SECRET_ACCESS_KEY" -X POST -H "Content-Type: application/json" -d '{ "name": "gold", "storage_namespace": "local://gold", "default_branch": "main", "sample_data": false }' http://localhost:8000/api/v1/repositories || true
+          wait
