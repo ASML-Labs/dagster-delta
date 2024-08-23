@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Optional, TypedDict, Union, cast
 
+import pyarrow.dataset as ds
 from dagster import InputContext, OutputContext
 from dagster._config.pythonic_config import ConfigurableIOManagerFactory
 from dagster._core.definitions.time_window_partitions import TimeWindow
@@ -81,6 +82,7 @@ class _DeltaTableIOManagerResourceConfig(TypedDict):
     table_config: NotRequired[dict[str, str]]
     custom_metadata: NotRequired[dict[str, str]]
     writer_properties: NotRequired[dict[str, str]]
+    parquet_read_options: NotRequired[ds.ParquetReadOptions]
 
 
 class DeltaLakeIOManager(ConfigurableIOManagerFactory):

@@ -297,7 +297,12 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):  # noqa: D101
         connection: TableConnection,
     ) -> T:
         """Loads the input as a pyarrow Table or RecordBatchReader."""
-        dataset = _table_reader(table_slice, connection)
+        parquet_read_options = (
+            context.resource_config.get("parquet_read_options", None)
+            if context.resource_config is not None
+            else None
+        )
+        dataset = _table_reader(table_slice, connection, parquet_read_options=parquet_read_options)
 
         if context.dagster_type.typing_type == ds.Dataset:
             if table_slice.columns is not None:
@@ -512,6 +517,7 @@ def _table_reader(
     connection: TableConnection,
     version: Optional[int] = None,
     date_format: Optional[dict[str, str]] = None,
+    parquet_read_options: Optional[ds.ParquetReadOptions] = None,
 ) -> ds.Dataset:
     table = DeltaTable(
         table_uri=connection.table_uri,
@@ -534,7 +540,7 @@ def _table_reader(
             partition_expr = filters_to_expression([partition_filters])
 
     logger.debug("Dataset input predicate %s", partition_expr)
-    dataset = table.to_pyarrow_dataset()
+    dataset = table.to_pyarrow_dataset(parquet_read_options=parquet_read_options)
     if partition_expr is not None:
         dataset = dataset.filter(expression=partition_expr)
 
