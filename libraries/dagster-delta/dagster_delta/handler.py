@@ -534,7 +534,7 @@ def _table_reader(
             partition_expr = filters_to_expression([partition_filters])
 
     logger.debug("Dataset input predicate %s", partition_expr)
-    dataset = table.to_pyarrow_dataset()
+    dataset = table.to_pyarrow_dataset(parquet_read_options=connection.parquet_read_options)
     if partition_expr is not None:
         dataset = dataset.filter(expression=partition_expr)
 

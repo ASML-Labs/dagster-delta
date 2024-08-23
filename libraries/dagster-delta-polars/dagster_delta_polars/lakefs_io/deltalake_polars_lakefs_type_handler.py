@@ -125,6 +125,7 @@ class DeltaLakePolarsLakeFSTypeHandler(DeltaLakePolarsTypeHandler):
                 table_uri=new_table_uri,
                 storage_options=connection.storage_options,
                 table_config=connection.table_config,
+                parquet_read_options=connection.parquet_read_options,
             )
             super().handle_output(context, table_slice, obj, new_connection)
             self.repository.branch(step_branch_name).commit(
