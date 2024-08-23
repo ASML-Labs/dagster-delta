@@ -37,7 +37,6 @@ class TableConnection:  # noqa: D101
     table_uri: str
     storage_options: dict[str, str]
     table_config: Optional[dict[str, str]]
-    parquet_read_options: Optional[ds.ParquetReadOptions]
 
 
 class _StorageOptionsConfig(TypedDict, total=False):
@@ -250,7 +249,6 @@ class DeltaLakeDbClient(DbClient):  # noqa: D101
         resource_config = cast(_DeltaTableIOManagerResourceConfig, context.resource_config)
         root_uri = resource_config["root_uri"].rstrip("/")
         storage_options = resource_config["storage_options"]
-        parquet_read_options = resource_config.get("parquet_read_options", None)
 
         if "local" in storage_options:
             storage_options = storage_options["local"]
@@ -281,7 +279,6 @@ class DeltaLakeDbClient(DbClient):  # noqa: D101
             table_uri=table_uri,
             storage_options=storage_options or {},
             table_config=table_config,
-            parquet_read_options=parquet_read_options,
         )
 
         yield conn
