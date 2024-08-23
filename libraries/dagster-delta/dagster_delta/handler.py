@@ -297,11 +297,15 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):  # noqa: D101
         connection: TableConnection,
     ) -> T:
         """Loads the input as a pyarrow Table or RecordBatchReader."""
-        parquet_read_options = (
-            context.resource_config.get("parquet_read_options", None)
-            if context.resource_config is not None
-            else None
-        )
+        parquet_read_options = None
+        if context.resource_config is not None:
+            parquet_read_options = context.resource_config.get("parquet_read_options", None)
+            parquet_read_options = (
+                ds.ParquetReadOptions(**parquet_read_options)
+                if parquet_read_options is not None
+                else None
+            )
+
         dataset = _table_reader(table_slice, connection, parquet_read_options=parquet_read_options)
 
         if context.dagster_type.typing_type == ds.Dataset:

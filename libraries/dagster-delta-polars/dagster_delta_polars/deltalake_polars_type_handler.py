@@ -58,11 +58,16 @@ class DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  #
         """Loads the input as a Polars DataFrame or LazyFrame."""
         metadata = context.metadata if context.metadata is not None else {}
         date_format = extract_date_format_from_partition_definition(context)
-        parquet_read_options = (
-            context.resource_config.get("parquet_read_options", None)
-            if context.resource_config is not None
-            else None
-        )
+
+        parquet_read_options = None
+        if context.resource_config is not None:
+            parquet_read_options = context.resource_config.get("parquet_read_options", None)
+            parquet_read_options = (
+                ds.ParquetReadOptions(**parquet_read_options)
+                if parquet_read_options is not None
+                else None
+            )
+
         dataset = _table_reader(
             table_slice,
             connection,
