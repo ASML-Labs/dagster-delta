@@ -18,13 +18,16 @@ from dagster_delta.io_manager import WriteMode
 def a_df() -> pl.DataFrame:
     return pl.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
 
+
 @op(out=Out(metadata={"schema": "add_one"}))
 def add_one(df: pl.DataFrame) -> pl.DataFrame:
     return df + 1
 
+
 @graph
 def add_one_to_dataframe():
     add_one(a_df())
+
 
 @pytest.fixture()
 def io_manager_with_parquet_read_options(tmp_path) -> DeltaLakePolarsIOManager:
@@ -35,9 +38,10 @@ def io_manager_with_parquet_read_options(tmp_path) -> DeltaLakePolarsIOManager:
         parquet_read_options={"coerce_int96_timestamp_unit": "us"},
     )
 
+
 def test_deltalake_io_manager_with_parquet_read_options(
-        tmp_path,
-        io_manager_with_parquet_read_options,
+    tmp_path,
+    io_manager_with_parquet_read_options,
 ):
     resource_defs = {"io_manager": io_manager_with_parquet_read_options}
 

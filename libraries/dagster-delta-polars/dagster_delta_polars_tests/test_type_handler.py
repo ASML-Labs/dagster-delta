@@ -35,9 +35,6 @@ def io_manager(tmp_path) -> DeltaLakePolarsIOManager:
     )
 
 
-
-
-
 @op(out=Out(metadata={"schema": "a_df"}))
 def a_df() -> pl.DataFrame:
     return pl.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
