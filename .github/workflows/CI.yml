@@ -142,6 +142,6 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         packages-dir: my_dists/dagster-unity-catalog-polars/dist/
-        password: ${{ secrets.PYPI_API_TOKEN_DDP }}
+        password: ${{ secrets.PYPI_API_TOKEN_DDUC }}
         verbose: true
 
