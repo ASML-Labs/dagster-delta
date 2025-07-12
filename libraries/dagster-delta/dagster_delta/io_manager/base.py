@@ -18,7 +18,7 @@ from dagster._core.storage.db_io_manager import (
 from pydantic import Field
 
 # from dagster_delta._db_io_manager import CustomDbIOManager
-from dagster._core.storage.db_io_manager import DbIOManager as CustomDbIOManager
+from dagster._core.storage.db_io_manager import DbIOManager
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired
@@ -192,9 +192,9 @@ class BaseDeltaLakeIOManager(ConfigurableIOManagerFactory):
     def default_load_type() -> Optional[type]:  # noqa: D102
         return None
 
-    def create_io_manager(self, context) -> CustomDbIOManager:  # noqa: D102, ANN001, ARG002
+    def create_io_manager(self, context) -> DbIOManager:  # noqa: D102, ANN001, ARG002
         self.storage_options.model_dump()
-        return CustomDbIOManager(
+        return DbIOManager(
             db_client=DeltaLakeDbClient(),
             database="deltalake",
             schema=self.schema_,
