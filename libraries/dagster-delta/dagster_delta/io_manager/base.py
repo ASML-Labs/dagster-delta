@@ -17,7 +17,8 @@ from dagster._core.storage.db_io_manager import (
 )
 from pydantic import Field
 
-from dagster_delta._db_io_manager import CustomDbIOManager
+# from dagster_delta._db_io_manager import CustomDbIOManager
+import dagster._core.storage.db_io_manager.DbIOManager as CustomDbIOManager
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired
