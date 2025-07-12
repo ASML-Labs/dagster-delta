@@ -98,9 +98,10 @@ def _value_dnf(
     partition = list(set(partition))
     if len(partition) > 1:
         return (table_partition.partition_expr, "in", partition)
-    else:
+    elif len(partition) == 1:
         return (table_partition.partition_expr, "=", partition[0])
-
+    else:
+        return (table_partition.partition_expr, "=", "willneverbeused")
 
 def _time_window_partition_dnf(
     table_partition: TablePartitionDimension,
