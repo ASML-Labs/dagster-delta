@@ -65,41 +65,41 @@ def _value_dnf(
     tuple[str, str, str],
 ]:  # noqa: ANN202
     # ", ".join(f"'{partition}'" for partition in table_partition.partitions)  # noqa: ERA001
-    if (
-        isinstance(table_partition.partitions, list)
-        and all(isinstance(p, TimeWindow) for p in table_partition.partitions)
-    ) or isinstance(table_partition.partitions, TimeWindow):
-        if date_format is None:
-            raise Exception(
-                "Date format not set on time based partition definition, even though field is (str, int). Set date fmt on the partition_def, or change column type to date/datetime.",
-            )
-        if isinstance(table_partition.partitions, list):
-            start_dts = [partition.start for partition in table_partition.partitions]  # type: ignore
-            end_dts = [partition.end for partition in table_partition.partitions]  # type: ignore
-            start_dt = min(start_dts)
-            end_dt = max(end_dts)
-        else:
-            start_dt = table_partition.partitions.start
-            end_dt = table_partition.partitions.end
+    # if (
+    #     isinstance(table_partition.partitions, list)
+    #     and all(isinstance(p, TimeWindow) for p in table_partition.partitions)
+    # ) or isinstance(table_partition.partitions, TimeWindow):
+    #     if date_format is None:
+    #         raise Exception(
+    #             "Date format not set on time based partition definition, even though field is (str, int). Set date fmt on the partition_def, or change column type to date/datetime.",
+    #         )
+    #     if isinstance(table_partition.partitions, list):
+    #         start_dts = [partition.start for partition in table_partition.partitions]  # type: ignore
+    #         end_dts = [partition.end for partition in table_partition.partitions]  # type: ignore
+    #         start_dt = min(start_dts)
+    #         end_dt = max(end_dts)
+    #     else:
+    #         start_dt = table_partition.partitions.start
+    #         end_dt = table_partition.partitions.end
 
-        start_dt = start_dt.strftime(date_format)
-        end_dt = end_dt.strftime(date_format)
+    #     start_dt = start_dt.strftime(date_format)
+    #     end_dt = end_dt.strftime(date_format)
 
-        if field_type == "integer":
-            start_dt = int(start_dt)
-            end_dt = int(end_dt)
-        return [
-            (table_partition.partition_expr, ">=", start_dt),
-            (table_partition.partition_expr, "<", end_dt),
-        ]
+    #     if field_type == "integer":
+    #         start_dt = int(start_dt)
+    #         end_dt = int(end_dt)
+    #     return [
+    #         (table_partition.partition_expr, ">=", start_dt),
+    #         (table_partition.partition_expr, "<", end_dt),
+    #     ]
 
+    # else:
+    partition = cast(Sequence[str], table_partition.partitions)
+    partition = list(set(partition))
+    if len(partition) > 1:
+        return (table_partition.partition_expr, "in", partition)
     else:
-        partition = cast(Sequence[str], table_partition.partitions)
-        partition = list(set(partition))
-        if len(partition) > 1:
-            return (table_partition.partition_expr, "in", partition)
-        else:
-            return (table_partition.partition_expr, "=", partition[0])
+        return (table_partition.partition_expr, "=", partition[0])
 
 
 def _time_window_partition_dnf(
