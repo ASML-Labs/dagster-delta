@@ -1,7 +1,7 @@
 from collections.abc import Iterable, Sequence
 from typing import Optional, Union, cast
 
-from dagster._core.definitions.time_window_partitions import (
+from dagster._core.definitions.partitions.utils import (
     TimeWindow,
 )
 from dagster._core.storage.db_io_manager import TablePartitionDimension

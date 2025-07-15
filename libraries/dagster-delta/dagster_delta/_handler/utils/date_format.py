@@ -5,7 +5,7 @@ from dagster import (
     MultiPartitionsDefinition,
     OutputContext,
 )
-from dagster._core.definitions.time_window_partitions import (
+from dagster._core.definitions.partitions.definition.time_window import (
     TimeWindowPartitionsDefinition,
 )
 

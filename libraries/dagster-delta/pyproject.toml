@@ -1,29 +1,31 @@
 [project]
 name = "dagster-delta"
-version = "0.5.0"
+version = "0.5.1"
 description = "Deltalake IO Managers for Dagster with pyarrow and Polars support."
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = [
-    "dagster>=1.8,<2.0",
-    "deltalake>=1.0.0",
-    "pendulum>=3.0.0",
-]
-authors = [{name = "Ion Koutsouris"}]
+dependencies = ["dagster>=1.11.1,<2.0", "deltalake>=1.0.0", "pendulum>=3.0.0"]
+authors = [{ name = "Ion Koutsouris" }]
 license-files = ["LICENSE", "licenses/elementl LICENSE"]
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12"
+    "Programming Language :: Python :: 3.12",
 ]
-keywords = ["dagster", "deltalake", "delta","datalake", "io manager", "polars", "pyarrow"]
+keywords = [
+    "dagster",
+    "deltalake",
+    "delta",
+    "datalake",
+    "io manager",
+    "polars",
+    "pyarrow",
+]
 
 [project.optional-dependencies]
-polars = [
-    "polars>=1.31.0"
-]
+polars = ["polars>=1.31.0"]
 
 [build-system]
 requires = ["hatchling"]
@@ -32,7 +34,7 @@ build-backend = "hatchling.build"
 [tool.pyright]
 
 typeCheckingMode = 'basic'
-reportUnknownMemberType   = false
+reportUnknownMemberType = false
 exclude = [
     ".bzr",
     ".direnv",
@@ -59,7 +61,7 @@ exclude = [
 venvPath = "."
 venv = ".venv"
 reportMissingImports = false
-pythonVersion =  "3.10"
+pythonVersion = "3.10"
 
 [tool.ruff]
 
