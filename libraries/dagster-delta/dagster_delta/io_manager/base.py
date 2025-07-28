@@ -255,7 +255,7 @@ class DeltaLakeDbClient(DbClient):  # noqa: D101
         elif "azure" in storage_options:
             storage_options = AzureConfig(**storage_options["azure"])  # type: ignore
         elif "gcs" in storage_options:
-            storage_options = GcsConfig(storage_options["gcs"])  # type: ignore
+            storage_options = GcsConfig(**storage_options["gcs"])  # type: ignore
         else:
             raise NotImplementedError("No valid storage_options config found.")
 
