@@ -48,7 +48,7 @@ class _DeltaLakePyArrowTypeHandler(DeltalakeBaseArrowTypeHandler[ArrowTypes]):  
     ) -> ArrowStreamExportable:  # noqa: D102
         return RecordBatchReader.from_arrow(obj)
 
-    def get_delta_schema(self, obj) -> Schema:
+    def get_delta_schema(self, obj: Union[ArrowStreamExportable, ArrowArrayExportable]) -> Schema:
         return Schema.from_arrow(
             _convert_arro3_schema_to_delta(RecordBatchReader.from_arrow(obj).schema),
         )
