@@ -15,6 +15,7 @@ from dagster._core.storage.db_io_manager import DbTypeHandler, TableSlice
 from deltalake import CommitProperties, DeltaTable, QueryBuilder, WriterProperties, write_deltalake
 from deltalake.exceptions import TableNotFoundError
 from deltalake.schema import Schema
+from deltalake.writer._conversion import _convert_arro3_schema_to_delta
 
 from dagster_delta._handler.merge import merge_execute
 from dagster_delta._handler.utils import (
@@ -54,11 +55,6 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
     @abstractmethod
     def to_arrow(self, obj: T) -> RecordBatchReader:  # type: ignore
         """Abstract method to convert type to arrow"""
-        pass
-
-    @abstractmethod
-    def get_delta_schema(self, obj: T) -> Schema:
-        """Abstract method to retrieve the delta schema of the dataset"""
         pass
 
     @abstractmethod
@@ -137,7 +133,7 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
         object_stats = self.get_output_stats(obj)
 
         data = self.to_arrow(obj=obj)
-        delta_schema = self.get_delta_schema(obj=obj)
+        delta_schema = Schema.from_arrow(_convert_arro3_schema_to_delta(data.schema))
         resource_config = cast(_DeltaTableIOManagerResourceConfig, context.resource_config)
         save_mode = definition_metadata.get("mode")
         main_save_mode = resource_config.get("mode")

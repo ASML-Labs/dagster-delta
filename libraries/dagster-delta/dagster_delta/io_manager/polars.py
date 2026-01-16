@@ -24,8 +24,6 @@ from dagster._core.storage.db_io_manager import (
     DbTypeHandler,
     TableSlice,
 )
-from deltalake.schema import Schema
-from deltalake.writer._conversion import _convert_arro3_schema_to_delta
 
 from dagster_delta._handler.base import (
     DeltalakeBaseArrowTypeHandler,
@@ -64,15 +62,7 @@ class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  
             lazy=True,
         )
 
-        return stream  # type: ignore[reportReturnType]
-
-    def get_delta_schema(self, obj: PolarsTypes) -> Schema:
-        if isinstance(obj, pl.LazyFrame):
-            obj = obj.collect()
-
-        return Schema.from_arrow(
-            _convert_arro3_schema_to_delta(RecordBatchReader.from_arrow(obj).schema),
-        )
+        return RecordBatchReader.from_arrow(stream)
 
     def load_input(
         self,
