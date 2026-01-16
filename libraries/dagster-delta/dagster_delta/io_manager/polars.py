@@ -4,6 +4,7 @@ from collections.abc import Sequence
 from typing import Optional, Union
 
 from deltalake import DeltaTable
+from polars.lazyframe.opt_flags import DEFAULT_QUERY_OPT_FLAGS
 
 from dagster_delta._handler.utils import (
     create_predicate,
@@ -115,7 +116,18 @@ class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  
         connection: TableConnection,
     ):
         """Writes polars frame as delta table"""
-        super().handle_output(context, table_slice, obj, connection)
+        if isinstance(obj, pl.DataFrame):
+            obj = obj.lazy()
+
+        ldf = obj._ldf.with_optimizations(DEFAULT_QUERY_OPT_FLAGS._pyoptflags)  # type: ignore[reportAttributeAccessIssue]
+        stream = ldf.collect_batches(
+            engine="streaming",
+            maintain_order=True,
+            chunk_size=None,
+            lazy=True,
+        )
+
+        super().handle_output(context, table_slice, obj, connection, data_override=stream)  # type: ignore[reportArgumentType]
         metadata = {**context.consume_logged_metadata()}
 
         if connection.table_uri.startswith("lakefs://"):

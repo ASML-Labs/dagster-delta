@@ -33,10 +33,10 @@ def create_predicate(
                 value = to_sql_tuple(value)
             else:
                 value = str(tuple(v for v in value))
-        elif isinstance(value, date):
-            value = f"'{value.strftime(DELTA_DATE_FORMAT)}'"
         elif isinstance(value, datetime):
             value = f"'{value.strftime(DELTA_DATETIME_FORMAT)}'"
+        elif isinstance(value, date):
+            value = f"'{value.strftime(DELTA_DATE_FORMAT)}'"
         partition_predicates.append(f"{column} {part_filter[1]} {value}")
 
     return " AND ".join(partition_predicates)

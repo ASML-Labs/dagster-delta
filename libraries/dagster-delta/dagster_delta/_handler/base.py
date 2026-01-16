@@ -107,6 +107,7 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
         table_slice: TableSlice,
         obj: T,
         connection: TableConnection,
+        data_override: T | None = None,
     ):
         """Stores pyarrow types in Delta table."""
         logger = logging.getLogger()
@@ -183,19 +184,26 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
 
             partition_columns = [dim.partition_expr for dim in table_slice.partition_dimensions]
 
+        if data_override:
+            logger.info(
+                "Data override option enabled, writing using %s instead of Arrow",
+                type(data_override),
+            )
+            data = data_override
+
         if main_save_mode not in ["merge", "create_or_replace"]:
             if predicate is not None:
                 logger.debug("Using explicit partition predicate: \n%s", predicate)
-            write_deltalake(  # type: ignore
+            write_deltalake(
                 table_or_uri=connection.table_uri,
-                data=data,
+                data=data,  # type: ignore[reportArgumentType]
                 storage_options=connection.storage_options,
-                mode=main_save_mode,  # type: ignore
+                mode=main_save_mode,  # type: ignore[reportArgumentType]
                 predicate=predicate,
                 partition_by=partition_columns,
-                schema_mode=schema_mode,  # type: ignore
+                schema_mode=schema_mode,  # type: ignore[reportArgumentType]
                 configuration=table_config,
-                writer_properties=writer_properties,  # type: ignore
+                writer_properties=writer_properties,  # type: ignore[reportArgumentType]
                 commit_properties=commit_properties,
             )
         elif main_save_mode == "create_or_replace":
@@ -226,7 +234,7 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
                 )
             merge_stats = merge_execute(
                 dt,
-                data,
+                data,  # type: ignore[reportArgumentType]
                 MergeConfig.model_validate(merge_config),
                 writer_properties=writer_properties,
                 commit_properties=commit_properties,

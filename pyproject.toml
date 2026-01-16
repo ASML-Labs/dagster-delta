@@ -2,7 +2,7 @@
 name = "dagster-delta-repo"
 version = "0.5.6"
 description = "Dagster deltalake implementation for Polars and PyArrow with read, write and MERGE support"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
     { name = "Gian Violi", email = "96206151+gfvioli@users.noreply.github.com" },
     { name = "Ion Koutsouris", email = "15728914+ion-elgreco@users.noreply.github.com" },
@@ -10,7 +10,6 @@ authors = [
 license = { file = "LICENSE" }
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -36,8 +35,9 @@ dagster-delta = { workspace = true }
 dagster-unity-catalog-polars = { workspace = true }
 
 [dependency-groups]
+
 dev = [
-    "polars==1.31.0",
+    "polars>=1.37.0",
     "deltalake<=1.2.0",
     "pyarrow<=18.0.0",
     "pyright==1.1.393",
