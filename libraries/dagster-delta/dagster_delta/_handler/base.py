@@ -15,7 +15,6 @@ from dagster._core.storage.db_io_manager import DbTypeHandler, TableSlice
 from deltalake import CommitProperties, DeltaTable, QueryBuilder, WriterProperties, write_deltalake
 from deltalake.exceptions import TableNotFoundError
 from deltalake.schema import Schema
-from deltalake.writer._conversion import _convert_arro3_schema_to_delta
 
 from dagster_delta._handler.merge import merge_execute
 from dagster_delta._handler.utils import (
@@ -55,6 +54,11 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
     @abstractmethod
     def to_arrow(self, obj: T) -> RecordBatchReader:  # type: ignore
         """Abstract method to convert type to arrow"""
+        pass
+
+    @abstractmethod
+    def get_delta_schema(self, obj: T) -> Schema:
+        """Abstract method to retrieve the delta schema of the dataset"""
         pass
 
     @abstractmethod
@@ -107,7 +111,6 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
         table_slice: TableSlice,
         obj: T,
         connection: TableConnection,
-        data_override: T | None = None,
     ):
         """Stores pyarrow types in Delta table."""
         logger = logging.getLogger()
@@ -134,7 +137,7 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
         object_stats = self.get_output_stats(obj)
 
         data = self.to_arrow(obj=obj)
-        delta_schema = Schema.from_arrow(_convert_arro3_schema_to_delta(data.schema))
+        delta_schema = self.get_delta_schema(obj=obj)
         resource_config = cast(_DeltaTableIOManagerResourceConfig, context.resource_config)
         save_mode = definition_metadata.get("mode")
         main_save_mode = resource_config.get("mode")
@@ -183,13 +186,6 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
                 predicate = create_predicate(partition_filters)
 
             partition_columns = [dim.partition_expr for dim in table_slice.partition_dimensions]
-
-        if data_override:
-            logger.info(
-                "Data override option enabled, writing using %s instead of Arrow",
-                type(data_override),
-            )
-            data = data_override
 
         if main_save_mode not in ["merge", "create_or_replace"]:
             if predicate is not None:

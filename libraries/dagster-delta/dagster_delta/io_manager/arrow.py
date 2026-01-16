@@ -5,6 +5,8 @@ import dagster as dg
 from arro3.core import RecordBatchReader, Table
 from arro3.core.types import ArrowArrayExportable, ArrowStreamExportable
 from dagster._core.storage.db_io_manager import DbTypeHandler
+from deltalake.schema import Schema
+from deltalake.writer._conversion import _convert_arro3_schema_to_delta
 
 from dagster_delta._handler.base import ArrowTypes, DeltalakeBaseArrowTypeHandler
 from dagster_delta.io_manager.base import (
@@ -45,6 +47,11 @@ class _DeltaLakePyArrowTypeHandler(DeltalakeBaseArrowTypeHandler[ArrowTypes]):  
         obj: Union[ArrowStreamExportable, ArrowArrayExportable],
     ) -> ArrowStreamExportable:  # noqa: D102
         return RecordBatchReader.from_arrow(obj)
+
+    def get_delta_schema(self, obj) -> Schema:
+        return Schema.from_arrow(
+            _convert_arro3_schema_to_delta(RecordBatchReader.from_arrow(obj).schema),
+        )
 
     def get_output_stats(self, obj: ArrowTypes) -> dict[str, dg.MetadataValue]:  # noqa: ARG002 # type: ignore
         """Returns output stats to be attached to the the context.

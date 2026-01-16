@@ -24,6 +24,8 @@ from dagster._core.storage.db_io_manager import (
     DbTypeHandler,
     TableSlice,
 )
+from deltalake.schema import Schema
+from deltalake.writer._conversion import _convert_arro3_schema_to_delta
 
 from dagster_delta._handler.base import (
     DeltalakeBaseArrowTypeHandler,
@@ -51,7 +53,26 @@ class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  
         logger.debug("shape of dataframe: %s", obj.shape)
         # TODO(ion): maybe move stats collection here
 
-        return RecordBatchReader.from_arrow(obj)
+        if isinstance(obj, pl.DataFrame):
+            obj = obj.lazy()
+
+        ldf = obj._ldf.with_optimizations(DEFAULT_QUERY_OPT_FLAGS._pyoptflags)  # type: ignore[reportAttributeAccessIssue]
+        stream = ldf.collect_batches(
+            engine="streaming",
+            maintain_order=True,
+            chunk_size=None,
+            lazy=True,
+        )
+
+        return stream  # type: ignore[reportReturnType]
+
+    def get_delta_schema(self, obj: PolarsTypes) -> Schema:
+        if isinstance(obj, pl.LazyFrame):
+            obj = obj.collect()
+
+        return Schema.from_arrow(
+            _convert_arro3_schema_to_delta(RecordBatchReader.from_arrow(obj).schema),
+        )
 
     def load_input(
         self,
@@ -116,18 +137,7 @@ class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  
         connection: TableConnection,
     ):
         """Writes polars frame as delta table"""
-        if isinstance(obj, pl.DataFrame):
-            obj = obj.lazy()
-
-        ldf = obj._ldf.with_optimizations(DEFAULT_QUERY_OPT_FLAGS._pyoptflags)  # type: ignore[reportAttributeAccessIssue]
-        stream = ldf.collect_batches(
-            engine="streaming",
-            maintain_order=True,
-            chunk_size=None,
-            lazy=True,
-        )
-
-        super().handle_output(context, table_slice, obj, connection, data_override=stream)  # type: ignore[reportArgumentType]
+        super().handle_output(context, table_slice, obj, connection)  # type: ignore[reportArgumentType]
         metadata = {**context.consume_logged_metadata()}
 
         if connection.table_uri.startswith("lakefs://"):
