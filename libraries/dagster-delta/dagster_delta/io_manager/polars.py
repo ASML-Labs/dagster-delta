@@ -42,9 +42,9 @@ class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  
     ) -> PolarsTypes:
         raise NotImplementedError
 
-    def to_arrow(self, obj: PolarsTypes, stream_while_collecting: bool = False) -> RecordBatchReader:  # noqa: D102
+    def to_arrow(self, obj: PolarsTypes) -> RecordBatchReader:  # noqa: D102
         if isinstance(obj, pl.LazyFrame):
-            obj = obj.collect(engine="streaming") if stream_while_collecting else obj.collect()
+            obj = obj.collect(engine="streaming")
 
         logger = logging.getLogger()
         logger.setLevel("DEBUG")
