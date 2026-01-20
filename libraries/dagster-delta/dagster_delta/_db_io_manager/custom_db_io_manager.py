@@ -13,10 +13,10 @@ try:
         TimeWindowPartitionsDefinition,
     )
 except ModuleNotFoundError:
-    from dagster._core.definitions.multi_dimensional_partitions import (
+    from dagster._core.definitions.multi_dimensional_partitions import (  # pyright: ignore[reportMissingImports]
         MultiPartitionsDefinition,
     )
-    from dagster._core.definitions.time_window_partitions import (
+    from dagster._core.definitions.time_window_partitions import (  # pyright: ignore[reportMissingImports]
         TimeWindowPartitionsDefinition,
     )
 

@@ -11,7 +11,7 @@ try:
         TimeWindowPartitionsDefinition,
     )
 except ModuleNotFoundError:
-    from dagster._core.definitions.time_window_partitions import (
+    from dagster._core.definitions.time_window_partitions import (  # pyright: ignore[reportMissingImports]
         TimeWindowPartitionsDefinition,
     )
 

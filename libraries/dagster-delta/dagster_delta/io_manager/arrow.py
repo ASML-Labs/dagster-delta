@@ -43,7 +43,7 @@ class _DeltaLakePyArrowTypeHandler(DeltalakeBaseArrowTypeHandler[ArrowTypes]):  
     def to_arrow(
         self,
         obj: Union[ArrowStreamExportable, ArrowArrayExportable],
-    ) -> ArrowStreamExportable:  # noqa: D102
+    ) -> RecordBatchReader:  # noqa: D102
         return RecordBatchReader.from_arrow(obj)
 
     def get_output_stats(self, obj: ArrowTypes) -> dict[str, dg.MetadataValue]:  # noqa: ARG002 # type: ignore

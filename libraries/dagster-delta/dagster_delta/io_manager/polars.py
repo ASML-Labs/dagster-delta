@@ -19,6 +19,7 @@ except ImportError as e:
         "Please install dagster-delta[polars]",
     ) from e
 from arro3.core import RecordBatchReader, Table
+from arro3.core.types import ArrowArrayExportable, ArrowStreamExportable
 from dagster import InputContext, MetadataValue, OutputContext
 from dagster._core.storage.db_io_manager import (
     DbTypeHandler,
@@ -37,7 +38,7 @@ PolarsTypes = Union[pl.DataFrame, pl.LazyFrame]
 class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  # noqa: D101
     def from_arrow(  # noqa: D102
         self,
-        obj: Union[RecordBatchReader, Table],
+        obj: Union[ArrowStreamExportable, ArrowArrayExportable],
         target_type: type[PolarsTypes],
     ) -> PolarsTypes:
         raise NotImplementedError

@@ -168,6 +168,7 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
         logger.debug("Writing with mode: `%s`", main_save_mode)
 
         merge_stats = None
+        partition_filters = None
         partition_columns = None
         predicate = None
 

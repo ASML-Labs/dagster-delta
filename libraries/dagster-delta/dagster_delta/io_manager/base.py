@@ -12,7 +12,7 @@ from dagster._config.pythonic_config import ConfigurableIOManagerFactory
 try:
     from dagster._core.definitions.partitions.utils import TimeWindow
 except ModuleNotFoundError:
-    from dagster._core.definitions.time_window_partitions import TimeWindow
+    from dagster._core.definitions.time_window_partitions import TimeWindow  # pyright: ignore[reportMissingImports]
 
 from dagster._core.storage.db_io_manager import (
     DbClient,
