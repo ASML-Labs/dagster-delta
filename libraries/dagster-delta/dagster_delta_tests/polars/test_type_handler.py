@@ -63,11 +63,11 @@ def test_deltalake_io_manager_with_ops(tmp_path, io_manager):
         dt = DeltaTable(os.path.join(tmp_path, "a_df/result"))
 
         out_df = QueryBuilder().register("tbl", dt).execute("select * from tbl").read_all()
-        assert out_df["a"].to_pylist() == [1, 2, 3]
+        assert sorted(out_df["a"].to_pylist()) == [1, 2, 3]
 
         dt = DeltaTable(os.path.join(tmp_path, "add_one/result"))
         out_df = QueryBuilder().register("tbl", dt).execute("select * from tbl").read_all()
-        assert out_df["a"].to_pylist() == [2, 3, 4]
+        assert sorted(out_df["a"].to_pylist()) == [2, 3, 4]
 
 
 @asset(key_prefix=["my_schema"])
@@ -115,11 +115,11 @@ def test_deltalake_io_manager_with_assets(
 
         dt = DeltaTable(os.path.join(tmp_path, "my_schema/" + asset1_path))
         out_df = dt.to_pyarrow_table()
-        assert out_df["a"].to_pylist() == [1, 2, 3]
+        assert sorted(out_df["a"].to_pylist()) == [1, 2, 3]
 
         dt = DeltaTable(os.path.join(tmp_path, "my_schema/" + asset2_path))
         out_df = dt.to_pyarrow_table()
-        assert out_df["a"].to_pylist() == [2, 3, 4]
+        assert sorted(out_df["a"].to_pylist()) == [2, 3, 4]
 
 
 def test_deltalake_io_manager_with_schema(tmp_path):
@@ -146,11 +146,11 @@ def test_deltalake_io_manager_with_schema(tmp_path):
 
         dt = DeltaTable(os.path.join(tmp_path, "custom_schema/my_df"))
         out_df = dt.to_pyarrow_table()
-        assert out_df["a"].to_pylist() == [1, 2, 3]
+        assert sorted(out_df["a"].to_pylist()) == [1, 2, 3]
 
         dt = DeltaTable(os.path.join(tmp_path, "custom_schema/my_df_plus_one"))
         out_df = dt.to_pyarrow_table()
-        assert out_df["a"].to_pylist() == [2, 3, 4]
+        assert sorted(out_df["a"].to_pylist()) == [2, 3, 4]
 
 
 @asset(key_prefix=["my_schema"], ins={"b_df": AssetIn("b_df", metadata={"columns": ["a"]})})
@@ -183,11 +183,11 @@ def test_loading_columns(tmp_path, io_manager, asset1, asset2, asset1_path, asse
 
         dt = DeltaTable(os.path.join(tmp_path, "my_schema/" + asset1_path))
         out_df = dt.to_pyarrow_table()
-        assert out_df["a"].to_pylist() == [1, 2, 3]
+        assert sorted(out_df["a"].to_pylist()) == [1, 2, 3]
 
         dt = DeltaTable(os.path.join(tmp_path, "my_schema/" + asset2_path))
         out_df = dt.to_pyarrow_table()
-        assert out_df["a"].to_pylist() == [2, 3, 4]
+        assert sorted(out_df["a"].to_pylist()) == [2, 3, 4]
 
         assert out_df.shape[1] == 1
 

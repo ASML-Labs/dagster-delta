@@ -38,7 +38,7 @@ dagster-unity-catalog-polars = { workspace = true }
 
 dev = [
     "polars>=1.37.0",
-    "deltalake<=1.2.0",
+    "deltalake>=1.2.1",
     "pyarrow<=18.0.0",
     "pyright==1.1.393",
     "pytest>=8.3.4",

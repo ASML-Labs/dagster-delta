@@ -74,7 +74,7 @@ def test_deltalake_io_manager_with_ops_appended(tmp_path, io_manager_append):
 
         dt = DeltaTable(os.path.join(tmp_path, "a_df/result"))
         out_df = dt.to_pyarrow_table()
-        assert out_df["a"].to_pylist() == expected_result1
+        assert sorted(out_df["a"].to_pylist()) == sorted(expected_result1)
 
         expected_result1.extend(expected_result1)
 
@@ -92,7 +92,7 @@ def test_deltalake_io_manager_with_ops_ignored(tmp_path, io_manager_ignore):
 
         dt = DeltaTable(os.path.join(tmp_path, "a_df/result"))
         out_df = dt.to_pyarrow_table()
-        assert out_df["a"].to_pylist() == [1, 2, 3]
+        assert sorted(out_df["a"].to_pylist()) == [1, 2, 3]
 
     dt = DeltaTable(os.path.join(tmp_path, "a_df/result"))
     assert dt.version() == 0

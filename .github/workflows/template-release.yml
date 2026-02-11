@@ -38,7 +38,7 @@ jobs:
 
       - name: Build
         working-directory: ${{ inputs.working_directory }}
-        run: uv build
+        run: uv build --out-dir dist
 
       - name: Validate release version
         run: python .github/validate-release-version.py ${{ inputs.working_directory }}/dist ${{ github.ref_name }}

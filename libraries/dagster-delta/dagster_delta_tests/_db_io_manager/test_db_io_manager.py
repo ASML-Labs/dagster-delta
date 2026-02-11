@@ -221,10 +221,11 @@ def test_multi_partitioned_to_multi_partitioned_asset(
 
         multi_partitioned_asset_1_data = res.asset_value(multi_partitioned_asset_1.key)
         multi_partitioned_asset_2_data = res.asset_value(multi_partitioned_asset_2.key)
-        assert multi_partitioned_asset_1_data.select(
-            multi_partitioned_asset_1_data.column_names,
-        ) == multi_partitioned_asset_2_data.select(
-            multi_partitioned_asset_1_data.column_names,
+        cols = multi_partitioned_asset_1_data.column_names
+        assert pa.table(
+            multi_partitioned_asset_1_data.select(cols).to_pydict(),
+        ) == pa.table(
+            multi_partitioned_asset_2_data.select(cols).to_pydict(),
         )
 
         multi_partitioned_asset_1_data_all.append(multi_partitioned_asset_1_data)
@@ -232,15 +233,15 @@ def test_multi_partitioned_to_multi_partitioned_asset(
 
     dt = DeltaTable(os.path.join(str(tmp_path), "/".join(multi_partitioned_asset_1.key.path)))
 
-    assert dt.to_pyarrow_table().sort_by("date_column") == pa.concat_tables(
-        multi_partitioned_asset_1_data_all,
-    )
+    assert pa.table(dt.to_pyarrow_table().to_pydict()).sort_by("date_column") == pa.table(
+        pa.concat_tables(multi_partitioned_asset_1_data_all).to_pydict(),
+    ).sort_by("date_column")
 
     dt = DeltaTable(os.path.join(str(tmp_path), "/".join(multi_partitioned_asset_2.key.path)))
     assert dt.metadata().partition_columns == ["color_column", "date_column"]
-    assert dt.to_pyarrow_table().sort_by("date_column") == pa.concat_tables(
-        multi_partitioned_asset_2_data_all,
-    )
+    assert pa.table(dt.to_pyarrow_table().to_pydict()).sort_by("date_column") == pa.table(
+        pa.concat_tables(multi_partitioned_asset_2_data_all).to_pydict(),
+    ).sort_by("date_column")
 
 
 def test_multi_partitioned_to_single_partitioned_asset_colors(
@@ -291,16 +292,18 @@ def test_multi_partitioned_to_single_partitioned_asset_dates(
 
     single_partitioned_asset_color_data = res.asset_value(single_partitioned_asset_color.key)
     cols = single_partitioned_asset_color_data.column_names
-    assert single_partitioned_asset_color_data.select(cols).sort_by(
-        "date_column",
-    ) == pa.concat_tables(
-        multi_partitioned_asset_1_data_all,
-    ).select(cols).sort_by("date_column")
+    assert pa.table(
+        single_partitioned_asset_color_data.select(cols).to_pydict(),
+    ).sort_by("date_column") == pa.table(
+        pa.concat_tables(multi_partitioned_asset_1_data_all).select(cols).to_pydict(),
+    ).sort_by("date_column")
 
     dt = DeltaTable(os.path.join(str(tmp_path), "/".join(single_partitioned_asset_color.key.path)))
     assert dt.metadata().partition_columns == ["color_column"]
 
-    assert single_partitioned_asset_color_data == dt.to_pyarrow_table()
+    assert pa.table(
+        single_partitioned_asset_color_data.to_pydict(),
+    ).sort_by("date_column") == pa.table(dt.to_pyarrow_table().to_pydict()).sort_by("date_column")
 
 
 def test_multi_partitioned_to_non_partitioned_asset(
@@ -332,14 +335,18 @@ def test_multi_partitioned_to_non_partitioned_asset(
     non_partitioned_asset_data = res.asset_value(non_partitioned_asset.key)
     cols = non_partitioned_asset_data.column_names
 
-    assert non_partitioned_asset_data.select(cols).sort_by("date_column") == pa.concat_tables(
-        multi_partitioned_asset_1_data_all,
-    ).select(cols).sort_by("date_column")
+    assert pa.table(
+        non_partitioned_asset_data.select(cols).to_pydict(),
+    ).sort_by("date_column") == pa.table(
+        pa.concat_tables(multi_partitioned_asset_1_data_all).select(cols).to_pydict(),
+    ).sort_by("date_column")
 
     dt = DeltaTable(os.path.join(str(tmp_path), "/".join(non_partitioned_asset.key.path)))
     assert dt.metadata().partition_columns == []
 
-    assert non_partitioned_asset_data == dt.to_pyarrow_table()
+    assert pa.table(
+        non_partitioned_asset_data.to_pydict(),
+    ).sort_by("date_column") == pa.table(dt.to_pyarrow_table().to_pydict()).sort_by("date_column")
 
 
 def test_multi_partitioned_to_multi_partitioned_with_different_dimensions(
@@ -377,4 +384,5 @@ def test_multi_partitioned_to_multi_partitioned_with_different_dimensions(
 
     dt = DeltaTable(os.path.join(str(tmp_path), "/".join(mapped_multi_partition.key.path)))
     assert dt.metadata().partition_columns == ["date_column", "letter"]
-    assert expected == dt.to_pyarrow_table()
+    actual = pa.table(dt.to_pyarrow_table().to_pydict()).select(expected.column_names)
+    assert expected == actual
