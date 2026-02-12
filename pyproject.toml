@@ -1,6 +1,6 @@
 [project]
 name = "dagster-delta-repo"
-version = "0.5.6"
+version = "0.5.7"
 description = "Dagster deltalake implementation for Polars and PyArrow with read, write and MERGE support"
 requires-python = ">=3.10"
 authors = [

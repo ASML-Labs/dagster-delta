@@ -1,6 +1,6 @@
 [project]
 name = "dagster-delta"
-version = "0.5.6"
+version = "0.5.7"
 description = "Deltalake IO Managers for Dagster with pyarrow and Polars support."
 readme = "README.md"
 requires-python = ">=3.10"
