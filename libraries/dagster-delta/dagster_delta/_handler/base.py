@@ -114,9 +114,11 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
 
         keys_from_metadata = self._find_keys_in_metadata(
             context,
-            ["merge_predicate", "merge_operations_config"],
+            ["merge_predicate", "merge_operations_config", "mode", "schema_mode"],
         )
 
+        mode_from_metadata = keys_from_metadata.get("mode", None)
+        schema_mode_from_metadata = keys_from_metadata.get("schema_mode", None)
         merge_predicate_from_metadata = keys_from_metadata.get("merge_predicate", None)
         merge_operations_config_from_metadata = keys_from_metadata.get(
             "merge_operations_config",
@@ -135,9 +137,8 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
         data = self.to_arrow(obj=obj)
         delta_schema = Schema.from_arrow(_convert_arro3_schema_to_delta(data.schema))
         resource_config = cast(_DeltaTableIOManagerResourceConfig, context.resource_config)
-        save_mode = definition_metadata.get("mode")
         main_save_mode = resource_config.get("mode")
-        schema_mode = definition_metadata.get("schema_mode") or resource_config.get(
+        schema_mode = schema_mode_from_metadata or resource_config.get(
             "schema_mode",
         )
         if schema_mode is not None:
@@ -158,13 +159,13 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
 
         date_format = extract_date_format_from_partition_definition(context)
 
-        if save_mode is not None:
+        if mode_from_metadata is not None:
             logger.debug(
                 "IO manager mode overridden with the asset metadata mode, %s -> %s",
                 main_save_mode,
-                save_mode,
+                mode_from_metadata,
             )
-            main_save_mode = save_mode
+            main_save_mode = mode_from_metadata
         logger.debug("Writing with mode: `%s`", main_save_mode)
 
         merge_stats = None
