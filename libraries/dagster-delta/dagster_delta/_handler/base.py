@@ -114,7 +114,14 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
 
         keys_from_metadata = self._find_keys_in_metadata(
             context,
-            ["merge_predicate", "merge_operations_config", "mode", "schema_mode"],
+            [
+                "merge_predicate",
+                "merge_operations_config",
+                "mode",
+                "schema_mode",
+                "writer_properties",
+                "commit_properties",
+            ],
         )
 
         mode_from_metadata = keys_from_metadata.get("mode", None)
@@ -124,6 +131,8 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
             "merge_operations_config",
             None,
         )
+        writer_properties_from_metadata = keys_from_metadata.get("writer_properties", None)
+        commit_properties_from_metadata = keys_from_metadata.get("commit_properties", None)
 
         definition_metadata = context.definition_metadata or {}
         additional_table_config = definition_metadata.get("table_configuration", {})
@@ -144,12 +153,14 @@ class DeltalakeBaseArrowTypeHandler(DbTypeHandler[T], Generic[T]):
         if schema_mode is not None:
             schema_mode = str(schema_mode)
 
-        writer_properties = resource_config.get("writer_properties")
+        writer_properties = writer_properties_from_metadata or resource_config.get(
+            "writer_properties",
+        )
         writer_properties = (
             WriterProperties(**writer_properties) if writer_properties is not None else None  # type: ignore
         )
 
-        commit_properties = definition_metadata.get("commit_properties") or resource_config.get(
+        commit_properties = commit_properties_from_metadata or resource_config.get(
             "commit_properties",
         )
         commit_properties = (

@@ -58,6 +58,40 @@ def test_deltalake_io_manager_with_ops_rust_writer(tmp_path, io_manager):
         result.extend([1, 2, 3])
 
 
+@op(
+    out=Out(
+        metadata={
+            "schema": "a_df",
+            "writer_properties": {"compression": "ZSTD"},
+        },
+    ),
+)
+def a_df_with_writer_props() -> pa.Table:
+    return pa.Table.from_pydict({"a": [1, 2, 3], "b": [4, 5, 6]})
+
+
+@graph
+def to_one_df_writer_props():
+    a_df_with_writer_props()
+
+
+def test_deltalake_io_manager_with_writer_properties_in_metadata(tmp_path, io_manager):
+    resource_defs = {"io_manager": io_manager}
+
+    job = to_one_df_writer_props.to_job(resource_defs=resource_defs)
+    res = job.execute_in_process()
+
+    assert res.success
+
+    dt = DeltaTable(os.path.join(tmp_path, "a_df/result"))
+
+    file = dt.get_add_actions()["path"].to_pylist()[0]
+    assert os.path.splitext(os.path.splitext(file)[0])[1] == ".zstd"
+
+    out_df = dt.to_pyarrow_table()
+    assert out_df["a"].to_pylist() == [1, 2, 3]
+
+
 @pytest.fixture
 def io_manager_with_writer_metadata(tmp_path) -> DeltaLakePyarrowIOManager:
     return DeltaLakePyarrowIOManager(
