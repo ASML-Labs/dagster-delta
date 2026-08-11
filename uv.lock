@@ -397,7 +397,7 @@ wheels = [
 
 [[package]]
 name = "dagster-unity-catalog-polars"
-version = "0.2.3"
+version = "0.2.4"
 source = { editable = "libraries/dagster-unity-catalog-polars" }
 dependencies = [
     { name = "dagster" },
