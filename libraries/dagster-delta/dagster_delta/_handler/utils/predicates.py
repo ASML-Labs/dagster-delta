@@ -43,6 +43,7 @@ def create_predicate(
         elif isinstance(value, date):
             value = f"'{value.strftime(DELTA_DATE_FORMAT)}'"
         partition_predicates.append(f"{column} {part_filter[1]} {value}")
-    partition_predicates.append(predicate_filters)
+    if predicate_filters is not None:
+        partition_predicates.append(predicate_filters) 
 
     return " AND ".join(partition_predicates)
