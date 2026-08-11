@@ -1,6 +1,6 @@
 [project]
 name = "dagster-unity-catalog-polars"
-version = "0.2.3"
+version = "0.2.4"
 description = "Polars Unity Catalog IO Managers for Dagster"
 readme = "README.md"
 requires-python = ">=3.9"
