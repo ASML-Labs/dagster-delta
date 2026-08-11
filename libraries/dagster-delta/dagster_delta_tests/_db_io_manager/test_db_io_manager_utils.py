@@ -98,7 +98,7 @@ def test_multi_time_partitions_monthly_checker(
         partitions=monthly_partitions_time_window,
     )
 
-    assert checker.hourly_delta == 744
+    assert checker.hourly_delta == [744]
     assert checker.start == dt.datetime(2022, 1, 1, 0)
     assert checker.end == dt.datetime(2022, 2, 1, 0)
     assert checker.is_consecutive()
@@ -111,7 +111,7 @@ def test_multi_time_partitions_daily_checker_consecutive(
         partitions=daily_partitions_time_window_consecutive,
     )
 
-    assert checker.hourly_delta == 24
+    assert checker.hourly_delta == [24, 24, 24]
     assert checker.start == dt.datetime(2022, 1, 1, 0)
     assert checker.end == dt.datetime(2022, 1, 4, 0)
     assert checker.is_consecutive()
@@ -124,7 +124,7 @@ def test_multi_time_partitions_daily_checker_non_consecutive(
         partitions=daily_partitions_time_window_not_consecutive,
     )
 
-    assert checker.hourly_delta == 24
+    assert checker.hourly_delta == [24, 24, 24]
     assert checker.start == dt.datetime(2022, 1, 1, 0)
     assert checker.end == dt.datetime(2022, 1, 5, 0)
     assert not checker.is_consecutive()
@@ -137,7 +137,7 @@ def test_multi_time_partitions_hourly_checker_consecutive(
         partitions=hourly_partitions_time_window_consecutive,
     )
 
-    assert checker.hourly_delta == 1
+    assert checker.hourly_delta == [1, 1, 1]
     assert checker.start == dt.datetime(2022, 1, 1, 1)
     assert checker.end == dt.datetime(2022, 1, 1, 4)
     assert checker.is_consecutive()
@@ -150,7 +150,7 @@ def test_multi_time_partitions_hourly_checker_non_consecutive(
         partitions=hourly_partitions_time_window_not_consecutive,
     )
 
-    assert checker.hourly_delta == 1
+    assert checker.hourly_delta == [1, 1, 1]
     assert checker.start == dt.datetime(2022, 1, 1, 1)
     assert checker.end == dt.datetime(2022, 1, 1, 5)
     assert not checker.is_consecutive()

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime as dt
+from itertools import accumulate
 from typing import List, Mapping, Sequence, Union, cast  # noqa
 
 import pendulum
@@ -128,20 +129,31 @@ class MultiTimePartitionsChecker:
         self.end = end_date
 
     @property
-    def hourly_delta(self) -> int:
-        deltas = [date_diff(w.start, w.end).in_hours() for w in self._partitions]
-        if len(set(deltas)) != 1:
+    def hourly_delta(self) -> list[int]:
+        # de-duplicate partitions while preserving order
+        partitions = list(dict.fromkeys(self._partitions).keys())
+
+        deltas = [date_diff(w.start, w.end).in_hours() for w in partitions]
+        deltas_months = [date_diff(w.start, w.end).in_months() for w in partitions]
+        condition = (len(set(deltas)) != 1) and (len(set(deltas_months)) != 1)
+        if condition:
             raise ValueError(
                 "TimeWindowPartitionsDefinition must have the same delta from start to end",
             )
-        return int(deltas[0])
+        return deltas
 
     def is_consecutive(self) -> bool:
         """Checks whether the provided start dates of each partition timewindow is consecutive"""
-        expected_starts = {
-            pdi(self.start).add(hours=self.hourly_delta * i)
-            for i in range(len(set(self._partitions)))
-        }
+        if len(set(self.hourly_delta)) == 1:
+            expected_starts = {
+                pdi(self.start).add(hours=self.hourly_delta[0] * i)
+                for i in range(len(set(self._partitions)))
+            }
+        else:
+            delta_hours = [0, *accumulate(self.hourly_delta[:-1])]
+            expected_starts = {
+                pdi(self.start).add(hours=h) for h in delta_hours[: len(set(self._partitions))]
+            }
 
         actual_starts = {pdi(d.start) for d in self._partitions}
 
