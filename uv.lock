@@ -293,7 +293,7 @@ wheels = [
 
 [[package]]
 name = "dagster-delta"
-version = "0.5.7"
+version = "0.5.8"
 source = { editable = "libraries/dagster-delta" }
 dependencies = [
     { name = "dagster" },
