@@ -20,6 +20,7 @@ def create_predicate(
         escaped = [v.replace("'", "''") for v in values]
         quoted = [f"'{v}'" for v in escaped]
         return f"({', '.join(quoted)})"
+
     if partition_filters is not None:
         for part_filter in partition_filters:
             column = (
