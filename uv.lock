@@ -293,7 +293,7 @@ wheels = [
 
 [[package]]
 name = "dagster-delta"
-version = "0.5.7"
+version = "0.5.8"
 source = { editable = "libraries/dagster-delta" }
 dependencies = [
     { name = "dagster" },
@@ -397,7 +397,7 @@ wheels = [
 
 [[package]]
 name = "dagster-unity-catalog-polars"
-version = "0.2.3"
+version = "0.2.4"
 source = { editable = "libraries/dagster-unity-catalog-polars" }
 dependencies = [
     { name = "dagster" },

@@ -11,6 +11,7 @@ from dagster_delta.io_manager.base import (
 
 def create_predicate(
     partition_filters: list[FilterLiteralType],
+    predicate_filters: Optional[str] = None,
     target_alias: Optional[str] = None,
 ) -> str:
     partition_predicates = []
@@ -21,7 +22,11 @@ def create_predicate(
         return f"({', '.join(quoted)})"
 
     for part_filter in partition_filters:
-        column = f"{target_alias}.{part_filter[0]}" if target_alias is not None else part_filter[0]
+        column = (
+            f"{target_alias}.`{part_filter[0]}`"
+            if target_alias is not None
+            else f"`{part_filter[0]}`"
+        )
         value = part_filter[2]
         if isinstance(value, (int, float, bool)):
             value = str(value)
@@ -38,5 +43,7 @@ def create_predicate(
         elif isinstance(value, date):
             value = f"'{value.strftime(DELTA_DATE_FORMAT)}'"
         partition_predicates.append(f"{column} {part_filter[1]} {value}")
+    if predicate_filters is not None:
+        partition_predicates.append(predicate_filters)
 
     return " AND ".join(partition_predicates)

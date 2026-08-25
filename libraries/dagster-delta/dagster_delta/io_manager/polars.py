@@ -74,6 +74,9 @@ class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  
         definition_metadata = (
             context.definition_metadata if context.definition_metadata is not None else {}
         )
+        metadata = context.metadata or {}
+        predicate_expr = metadata.get("predicate")
+
         version = definition_metadata.get("table_version")
         table = DeltaTable(
             table_uri=connection.table_uri,
@@ -94,11 +97,12 @@ class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  
             )
             if partition_filters is not None:
                 ## Convert partition_filter to predicate
-                predicate = create_predicate(partition_filters)
+                predicate = create_predicate(partition_filters, predicate_expr)
 
                 logger.debug("Dataset input predicate %s", predicate)
-
-        col_select = ",".join(table_slice.columns) if table_slice.columns is not None else "*"
+        if table_slice.columns is not None:
+            cleaned_columns = [f"`{col}`" for col in table_slice.columns]
+        col_select = ",".join(cleaned_columns) if table_slice.columns is not None else "*"
         query = f"SELECT {col_select} FROM tbl"
         if predicate is not None:
             query = f"{query} WHERE {predicate}"
