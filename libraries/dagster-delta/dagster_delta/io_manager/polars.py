@@ -95,7 +95,7 @@ class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  
                 table_schema=table.schema(),
                 date_format=date_format,
             )
-            if partition_filters is not None:
+            if partition_filters is not None or predicate_expr is not None:
                 ## Convert partition_filter to predicate
                 predicate = create_predicate(partition_filters, predicate_expr)
 
