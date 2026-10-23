@@ -47,7 +47,7 @@ class _DeltaLakePyArrowTypeHandler(DeltalakeBaseArrowTypeHandler[ArrowTypes]):  
         return RecordBatchReader.from_arrow(obj)
 
     def get_output_stats(self, obj: ArrowTypes) -> dict[str, dg.MetadataValue]:  # noqa: ARG002 # type: ignore
-        """Returns output stats to be attached to the the context.
+        """Returns output stats to be attached to the context.
 
         Args:
             obj (ArrowTypes): Union[pa.Table, pa.RecordBatchReader, ds.Dataset]

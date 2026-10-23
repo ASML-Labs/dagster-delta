@@ -56,7 +56,7 @@ def extract_date_format_from_partition_definition(
             date_format[partition_expr] = partitions_definition.fmt  # type: ignore
         else:
             raise ValueError(
-                "Single partition definition provided, so partion_expr needs to be a string",
+                "Single partition definition provided, so partition_expr needs to be a string",
             )
     elif isinstance(partitions_definition, MultiPartitionsDefinition):
         if isinstance(partition_expr, dict):
@@ -73,7 +73,7 @@ def extract_date_format_from_partition_definition(
                     date_format[partition_expr_name] = partition_dims_definition.partitions_def.fmt  # type: ignore[attr-defined]
         else:
             raise ValueError(
-                "MultiPartitionsDefinition provided, so partion_expr needs to be a dictionary mapping of {dimension: column}",
+                "MultiPartitionsDefinition provided, so partition_expr needs to be a dictionary mapping of {dimension: column}",
             )
 
     return date_format if len(date_format) else None

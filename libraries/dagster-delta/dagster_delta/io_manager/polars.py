@@ -145,7 +145,7 @@ class _DeltaLakePolarsTypeHandler(DeltalakeBaseArrowTypeHandler[PolarsTypes]):  
         context.add_output_metadata(metadata)
 
     def get_output_stats(self, obj: PolarsTypes) -> dict[str, MetadataValue]:
-        """Returns output stats to be attached to the the context.
+        """Returns output stats to be attached to the context.
 
         Args:
             obj (PolarsTypes): LazyFrame or DataFrame
