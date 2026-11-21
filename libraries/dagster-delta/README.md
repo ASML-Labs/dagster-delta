@@ -190,7 +190,7 @@ def my_asset(upstream_asset) -> pl.DataFrame: ...
 
 ### **Override** table name using `root_name`
 
-Instead of using the asset_name for the table name it's possible to set a custom table name using the `root_name` in the asset defintion metadata.
+Instead of using the asset_name for the table name it's possible to set a custom table name using the `root_name` in the asset definition metadata.
 
 This is useful where you have two or multiple assets who have the same table structure, but each asset is a subset of the full table partition_definition, and it wasn't possible to combine this into a single asset due to requiring different underlying Op logic and/or upstream assets:
 

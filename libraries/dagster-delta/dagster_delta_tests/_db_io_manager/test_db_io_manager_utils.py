@@ -80,7 +80,7 @@ def hourly_partitions_time_window_not_consecutive() -> list[TimeWindow]:
     ]
 
 
-# NB: The MonthlyPartitionDefinition in dagster will orchestrate the partitions into separate jobs to avoid issues with different month duration in hours so we only need to check a single month at a time. We need to check a single month doesn't collide witht the code like in the case of PR #20
+# NB: The MonthlyPartitionDefinition in dagster will orchestrate the partitions into separate jobs to avoid issues with different month duration in hours so we only need to check a single month at a time. We need to check a single month doesn't collide with the code like in the case of PR #20
 @pytest.fixture
 def monthly_partitions_time_window() -> list[TimeWindow]:
     return [
